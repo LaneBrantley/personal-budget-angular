@@ -107,9 +107,9 @@
             </article>
             <article>
                 <div class="text-box">
-                    <h1>Free</h1>
+                    <h1>Chart</h1>
                     <p>
-                        This app is free!!! And you are the only one holding your data!
+                        <canvas id="myChart" width="400" height="400"></canvas>
                     </p>
                 </div>
             </article>
@@ -126,5 +126,45 @@
             </div>
         </div>
     </footer>
+    <!-- Axios and ChartJS import -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>    <!-- Script to make chart -->
+    <script>
+        const dataSource = {
+            labels: [],
+            datasets: [
+                {
+                label: 'My First Dataset',
+                data: [],
+                backgroundColor: [
+                '#ffcd56',
+                '#ff6384',
+                '#36a2eb',
+                '#fd6b19'
+            ],
+                hoverOffset: 4
+            }]
+        };
+
+        function createChart() {
+            var ctx = document.getElementById("myChart").getContext("2d");
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: dataSource
+            });
+        }
+
+        function getBudget() {
+            axios.get('/budget').then(function (res) {
+                console.log(res);
+                for (var i = 0; i < res.data.myBudget.length; i++) {
+                    dataSource.datasets[0].data[i] = res.data.myBudget[i].budget;
+                    dataSource.labels[i] = res.data.myBudget[i].title;
+                }
+                createChart();
+            });
+        }
+        getBudget();
+    </script>
 </body>
 </html>
