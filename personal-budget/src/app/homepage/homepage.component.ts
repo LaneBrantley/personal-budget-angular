@@ -3,6 +3,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Chart } from 'chart.js';
 import * as d3 from 'd3';
 import { Pie } from 'd3-shape';
+import { DataService } from '../data.service';
+import { Data } from '@angular/router';
 
 @Component({
   selector: 'pb-homepage',
@@ -32,12 +34,11 @@ export class HomepageComponent implements OnInit{
     }]
   };
 
-  constructor(private http: HttpClient){
+  constructor(private http: HttpClient, private DataService: DataService){
 
   }
-
   ngOnInit(): void {
-    this.http.get('http://localhost:3000/budget').subscribe((res: any) => {
+    this.DataService.fetchData().subscribe((res: any) => {
       for (var i = 0; i < res.myBudget.length; i++) {
         this.dataSource.datasets[0].data[i] = res.myBudget[i].budget;
         this.dataSource.labels[i] = res.myBudget[i].title;
@@ -47,12 +48,19 @@ export class HomepageComponent implements OnInit{
     });
   }
   createChart() {
+    const options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      width: 400,
+      height: 400
+    }
     var canvas = document.getElementById("myChart") as HTMLCanvasElement | null;
     if (canvas) {
       const ctx = canvas.getContext('2d')!;
     var myPieChart = new Chart(ctx, {
         type: 'pie',
-        data: this.dataSource
+        data: this.dataSource,
+        options: options
     });
     }
   }
